@@ -87,10 +87,10 @@ void lineTracking() {
   while ( true ) {
     if ( digitalRead(matGiua) == HIGH ) {
       stopMotors();
-      // digitalWrite(IN1, LOW);
-      // analogWrite(IN2, 175);
-      // digitalWrite(IN3, LOW);
-      // analogWrite(IN4, 175);
+      digitalWrite(IN1, LOW);
+      analogWrite(IN2, 175);
+      digitalWrite(IN3, LOW);
+      analogWrite(IN4, 175);
       delay(10);
       stopMotors();
     } else if ( digitalRead(matGiua) != HIGH ) {
@@ -103,6 +103,29 @@ void lineTracking() {
     }
   }
 }
+
+void lineTracking2() {
+  while (true) {
+    if (digitalRead(matGiua) == HIGH) {
+      // Di chuyển thẳng khi cảm biến giữa thấy line
+      runMotors("truoc", 100, 150); // Tăng thời gian và tốc độ
+    } 
+    else if (digitalRead(matTrai) == HIGH) {
+      // Điều chỉnh sang trái nếu cảm biến trái thấy đường
+      runMotors("trai", 50, 100); 
+    }
+    else if (digitalRead(matPhai) == HIGH) {
+      // Điều chỉnh sang phải nếu cảm biến phải thấy đường
+      runMotors("phai", 50, 100);
+    } 
+    else {
+      // Không thấy đường -> Dừng động cơ
+      stopMotors();
+    }
+    delay(10); // Giữ độ trễ ngắn để đảm bảo phản hồi nhanh
+  }
+}
+
 
 void blinkTimes(int in) {
   for ( int i = 0; i < in; i++ ) {
