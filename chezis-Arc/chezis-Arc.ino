@@ -8,9 +8,9 @@
 
 #define P 13
 
-#define matGiua 44 // Mắt giữa
-#define matPhai 46 // Mắt phải
-#define matTrai 45 // Mắt trái
+#define matGiua 44  // Mắt giữa
+#define matPhai 46  // Mắt phải
+#define matTrai 45  // Mắt trái
 
 void setup() {
   pinMode(IN1, OUTPUT);
@@ -21,13 +21,13 @@ void setup() {
   pinMode(ENB, OUTPUT);
   pinMode(P, OUTPUT);
 
-  digitalWrite(ENA, HIGH); // Bật ENA
-  digitalWrite(ENB, HIGH); // Bật ENB
+  digitalWrite(ENA, HIGH);  // Bật ENA
+  digitalWrite(ENB, HIGH);  // Bật ENB
 
-  pinMode(matGiua, INPUT); // Thiết lập chân tín hiệu là input
-  pinMode(matTrai, INPUT); // Thiết lập chân tín hiệu là input
-  pinMode(matPhai, INPUT); // Thiết lập chân tín hiệu là input
-  Serial.begin(9600); // Khởi động Serial để in kết quả
+  pinMode(matGiua, INPUT);  // Thiết lập chân tín hiệu là input
+  pinMode(matTrai, INPUT);  // Thiết lập chân tín hiệu là input
+  pinMode(matPhai, INPUT);  // Thiết lập chân tín hiệu là input
+  Serial.begin(9600);       // Khởi động Serial để in kết quả
 }
 
 void loop() {
@@ -41,94 +41,44 @@ void loop() {
   runMotors("truoc", 1000, 255);
 
   // Chạy tới khi mắt giữa thấy line đen
-  while ( digitalRead(matGiua) != HIGH ) {
-    runMotors("truoc", 30, 65);
+  while (digitalRead(matGiua) != HIGH) {
+    runMotors("truoc", 10, 100);
   }
 
   // Force nhích
-  runMotors("truoc", 590, 100);
+  runMotors("truoc", 550, 100);
 
   // Xoay phải till track được line
   while (digitalRead(matPhai) != HIGH) {
     runMotors("phai", 10, 100);
   }
 
-  lineTracking();
+  vaoNgaTu();
 
   while (true);
-
 }
 
-void TurnLeft90Deg() {
-    while ( digitalRead(matTrai) != HIGH ) {
-      analogWrite(IN1, 100);
-      analogWrite(IN2, 0);
-      analogWrite(IN3, 0);
-      analogWrite(IN4, 100);
-      delay(10);
-    }
-    stopMotors();
-    return;
-}
-
-void TurnRight90Deg() {
-    while ( digitalRead(matPhai) != HIGH ) {
-      analogWrite(IN1, 0);
-      analogWrite(IN2, 100);
-      analogWrite(IN3, 100);
-      analogWrite(IN4, 0);
-      delay(10);
-    }
-    stopMotors();
-    return;
-}
-
-void lineTracking() {
+void vaoNgaTu() {
   while ( true ) {
-    if ( digitalRead(matGiua) == HIGH ) {
+    if ( digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH || 
+    digitalRead(matGiua) == HIGH && digitalRead(matPhai) == HIGH || 
+    digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH && digitalRead(matPhai) == HIGH ) {
       stopMotors();
-      digitalWrite(IN1, LOW);
-      analogWrite(IN2, 175);
-      digitalWrite(IN3, LOW);
-      analogWrite(IN4, 175);
-      delay(10);
-      stopMotors();
-    } else if ( digitalRead(matGiua) != HIGH ) {
-      digitalWrite(IN1, LOW);
-      analogWrite(IN2, 50);
-      analogWrite(IN3, 50);
-      digitalWrite(IN4, LOW);
-      delay(1);
-      stopMotors();
+      break;
     }
+    runMotors("truoc", 20, 125);
   }
-}
+  
+  //Force Nhích để vào ngã 4
+  runMotors("truoc", 365, 125);
+  delay(100);
+  // blinkTimes(4);
+  queo("trai");
 
-void lineTracking2() {
-  while (true) {
-    if (digitalRead(matGiua) == HIGH) {
-      // Di chuyển thẳng khi cảm biến giữa thấy line
-      runMotors("truoc", 100, 150); // Tăng thời gian và tốc độ
-    } 
-    else if (digitalRead(matTrai) == HIGH) {
-      // Điều chỉnh sang trái nếu cảm biến trái thấy đường
-      runMotors("trai", 50, 100); 
-    }
-    else if (digitalRead(matPhai) == HIGH) {
-      // Điều chỉnh sang phải nếu cảm biến phải thấy đường
-      runMotors("phai", 50, 100);
-    } 
-    else {
-      // Không thấy đường -> Dừng động cơ
-      stopMotors();
-    }
-    delay(10); // Giữ độ trễ ngắn để đảm bảo phản hồi nhanh
-  }
 }
-
 
 void blinkTimes(int in) {
-  for ( int i = 0; i < in; i++ ) {
+  for (int i = 0; i < in; i++) {
     digitalWrite(P, LOW);
     delay(100);
     digitalWrite(P, HIGH);
@@ -143,46 +93,66 @@ void stopMotors() {
   digitalWrite(IN4, LOW);
 }
 
-void runMotors(String s, int i, int speed) {
-
-  if ( s.equalsIgnoreCase("sau") ) {
-    analogWrite(IN1, speed);
-    digitalWrite(IN2, LOW);
-    analogWrite(IN3, speed);
-    digitalWrite(IN4, LOW);
-    delay(i);
-    stopMotors();
-    return;
-  } 
-
-  if ( s.equalsIgnoreCase("truoc") ) {
-    digitalWrite(IN1, LOW);
-    analogWrite(IN2, speed);
-    digitalWrite(IN3, LOW);
-    analogWrite(IN4, speed);
-    delay(i);
-    stopMotors();
-    return;
-  }
-
+void queo(String s) {
   if ( s.equalsIgnoreCase("trai") ) {
+    analogWrite(IN1, 175);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    analogWrite(IN4, 175);
+    delay(370);
+    stopMotors();
+    return;
+  }
+  if ( s.equalsIgnoreCase("phai") ) {
+    analogWrite(IN1, 175);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    analogWrite(IN4, 175);
+    delay(370);
+    stopMotors();
+    return;
+  }
+}
+
+void runMotors(String s, int time, int speed) {
+
+  if (s.equalsIgnoreCase("sau")) {
+    analogWrite(IN1, speed);
+    digitalWrite(IN2, LOW);
+    analogWrite(IN3, speed);
+    digitalWrite(IN4, LOW);
+    delay(time);
+    stopMotors();
+    return;
+  }
+
+  if (s.equalsIgnoreCase("truoc")) {
+    digitalWrite(IN1, LOW);
+    analogWrite(IN2, speed);
+    digitalWrite(IN3, LOW);
+    analogWrite(IN4, speed);
+    delay(time);
+    stopMotors();
+    return;
+  }
+
+  if (s.equalsIgnoreCase("trai")) {
     analogWrite(IN1, speed);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, LOW);
     analogWrite(IN4, speed);
-    delay(i);
+    delay(time);
     stopMotors();
     return;
   }
 
-  if ( s.equalsIgnoreCase("phai") ) {
+  if (s.equalsIgnoreCase("phai")) {
     digitalWrite(IN1, LOW);
     analogWrite(IN2, speed);
     analogWrite(IN3, speed);
     digitalWrite(IN4, LOW);
-    delay(i);
+    delay(time);
     stopMotors();
     return;
   }
-
 }
