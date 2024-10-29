@@ -12,7 +12,7 @@
 // DEFINE
 #define PIN_OUT1 A0     //! A1
 #define PIN_OUT2 A1     //! A2
-#define PIN_OUT3 A2     //! A3
+#define PIN_OUT3 A11     //! A3
 #define PIN_IN1 8       //! D4
 #define PIN_IN2 9       //! D5
 #define PIN_IN3 10       //! D6
