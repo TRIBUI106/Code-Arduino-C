@@ -32,13 +32,26 @@ void setup() {
 
 void loop() {
   digitalWrite(P, HIGH);
-  delay(1000);
+  delay(200);
   blinkTimes(3);
 
+  vaoNgaTu();
+  stopMotors();
+  chayRoTrai();
+  stopMotors();
+  blinkTimes(5);
+  delay(1000);
+  comeBack1();  
+
+  while (true);
+}
+
+void vaoNgaTu() {
+  
   // Force Default Color
-  runMotors("phai", 120, 150);
+  runMotors("phai", 100, 150);
   delay(100);
-  runMotors("truoc", 1000, 255);
+  runMotors("truoc", 1100, 255);
 
   // Chạy tới khi mắt giữa thấy line đen
   while (digitalRead(matGiua) != HIGH) {
@@ -46,19 +59,16 @@ void loop() {
   }
 
   // Force nhích
-  runMotors("truoc", 550, 100);
+  runMotors("truoc", 505, 100);
 
   // Xoay phải till track được line
   while (digitalRead(matPhai) != HIGH) {
-    runMotors("phai", 10, 100);
+    runMotors("phai", 5, 125);
   }
 
-  vaoNgaTu();
+  delay(100);
+  runMotors("trai", 90, 100);
 
-  while (true);
-}
-
-void vaoNgaTu() {
   while ( true ) {
     if ( digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH || 
     digitalRead(matGiua) == HIGH && digitalRead(matPhai) == HIGH || 
@@ -66,16 +76,48 @@ void vaoNgaTu() {
       stopMotors();
       break;
     }
-    runMotors("truoc", 20, 125);
+    runMotors("truoc", 20, 100);
   }
   
   //Force Nhích để vào ngã 4
-  runMotors("truoc", 365, 125);
+  runMotors("truoc", 450, 125);
   delay(100);
   // blinkTimes(4);
-  queo("trai");
+  while ( digitalRead(matTrai) != HIGH ) {
+    runMotors("trai", 5, 150);
+  }
 
+  stopMotors();
+  runMotors("phai", 35, 150);
+  return;
 }
+
+void chayRoTrai() {
+  // Chạy tới rổ xanh lá 
+  
+  while ( true ) {
+    if ( digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH || 
+    digitalRead(matGiua) == HIGH && digitalRead(matPhai) == HIGH || 
+    digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH && digitalRead(matPhai) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("truoc", 20, 110);
+  }
+
+  // Lùi lại để lấy đà bắn 
+  delay(50);
+  runMotors("sau", 350, 150);
+  // runMotors("trai", 50, 150);
+  return;
+}
+
+void comeBack1() {
+  // while ( digitalRead(matPhai) != HIGH ) {
+  //   runMotors("phai", 5, 255);
+  // }
+}
+
 
 void blinkTimes(int in) {
   for (int i = 0; i < in; i++) {
