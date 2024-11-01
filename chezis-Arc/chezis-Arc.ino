@@ -31,17 +31,17 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(P, HIGH);
+
   delay(200);
   blinkTimes(3);
 
-  vaoNgaTu();
-  stopMotors();
-  chayRoTrai();
-  stopMotors();
-  blinkTimes(5);
-  delay(1000);
-  comeBack1();  
+  // vaoNgaTu();
+  // stopMotors();
+  // chayRoTrai();
+  // stopMotors();
+  // blinkTimes(5);
+  // delay(5000);
+  chayRoPhai();
 
   while (true);
 }
@@ -49,17 +49,17 @@ void loop() {
 void vaoNgaTu() {
   
   // Force Default Color
-  runMotors("phai", 100, 150);
+  runMotors("phai", 150, 150);
   delay(100);
   runMotors("truoc", 1100, 255);
 
   // Chạy tới khi mắt giữa thấy line đen
   while (digitalRead(matGiua) != HIGH) {
-    runMotors("truoc", 10, 100);
+    runMotors("truoc", 10, 125);
   }
 
   // Force nhích
-  runMotors("truoc", 505, 100);
+  runMotors("truoc", 400, 150);
 
   // Xoay phải till track được line
   while (digitalRead(matPhai) != HIGH) {
@@ -108,16 +108,99 @@ void chayRoTrai() {
   // Lùi lại để lấy đà bắn 
   delay(50);
   runMotors("sau", 350, 150);
-  // runMotors("trai", 50, 150);
+  runMotors("trai", 130, 100);
   return;
 }
 
-void comeBack1() {
-  // while ( digitalRead(matPhai) != HIGH ) {
-  //   runMotors("phai", 5, 255);
-  // }
+void chayRoGiua() {
+
+  runMotors("phai", 230, 200);
+  runMotors("truoc", 300, 255);
+
+  while ( true ) {
+    if ( digitalRead(matGiua) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("truoc", 20, 200);
+  }
+
+  // Force Nhích rỗ giữa
+  runMotors("truoc", 190, 255);
+
+  // Xoay trái
+  while ( true ) {
+    if ( digitalRead(matTrai) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("trai", 10, 150);
+  }
+  
+  runMotors("phai", 70, 200);
+
+  // Vô ngã 4
+  while ( true ) {
+    if ( digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH || 
+    digitalRead(matGiua) == HIGH && digitalRead(matPhai) == HIGH || 
+    digitalRead(matGiua) == HIGH && digitalRead(matTrai) == HIGH && digitalRead(matPhai) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("truoc", 20, 180);
+  }
+
+  //Force Nhích để vào ngã 4
+  runMotors("truoc", 465, 125);
+  delay(100);
+  while ( digitalRead(matPhai) != HIGH ) {
+    runMotors("phai", 5, 150);
+  }
+
+  return;
+
 }
 
+void chayRoPhai() {
+
+  runMotors("phai", 210, 200);
+  runMotors("truoc", 300, 255);
+
+  while ( true ) {
+    if ( digitalRead(matGiua) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("truoc", 20, 200);
+  }
+  
+  // Force Nhích Line 2
+  runMotors("truoc", 190, 255);
+
+  // Xoay trái
+  while ( true ) {
+    if ( digitalRead(matTrai) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("trai", 10, 150);
+  }
+  
+  runMotors("phai", 70, 200);
+  runMotors("truoc", 100, 170);
+
+  
+  while ( true ) {
+    if ( digitalRead(matPhai) == HIGH ) {
+      stopMotors();
+      break;
+    }
+    runMotors("phai", 10, 150);
+  }
+
+  return;
+
+}
 
 void blinkTimes(int in) {
   for (int i = 0; i < in; i++) {
@@ -159,7 +242,7 @@ void queo(String s) {
 void runMotors(String s, int time, int speed) {
 
   if (s.equalsIgnoreCase("sau")) {
-    analogWrite(IN1, speed);
+    analogWrite(IN1, speed-1);
     digitalWrite(IN2, LOW);
     analogWrite(IN3, speed);
     digitalWrite(IN4, LOW);
@@ -170,7 +253,7 @@ void runMotors(String s, int time, int speed) {
 
   if (s.equalsIgnoreCase("truoc")) {
     digitalWrite(IN1, LOW);
-    analogWrite(IN2, speed);
+    analogWrite(IN2, speed-15);
     digitalWrite(IN3, LOW);
     analogWrite(IN4, speed);
     delay(time);
