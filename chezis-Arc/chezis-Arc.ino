@@ -163,7 +163,7 @@ void chayRoGiua() {
 
 void chayRoPhai() {
 
-  runMotors("phai", 210, 200);
+  runMotors("phai", 190, 200);
   runMotors("truoc", 300, 255);
 
   while ( true ) {
@@ -175,7 +175,7 @@ void chayRoPhai() {
   }
   
   // Force Nhích Line 2
-  runMotors("truoc", 190, 255);
+  runMotors("truoc", 165, 255);
 
   // Xoay trái
   while ( true ) {
@@ -186,7 +186,6 @@ void chayRoPhai() {
     runMotors("trai", 10, 150);
   }
   
-  runMotors("phai", 70, 200);
   runMotors("truoc", 100, 170);
 
   
@@ -197,6 +196,8 @@ void chayRoPhai() {
     }
     runMotors("phai", 10, 150);
   }
+
+  runMotors("trai", 25, 200);
 
   return;
 
